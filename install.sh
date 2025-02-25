@@ -27,6 +27,12 @@ if [ "$management_status" != "True" ]; then
     exit 1
 fi
 
+# Check if there is a default storage class
+if ! kubectl get storageclass | grep -i default; then
+    echo 'Error: No default storage class found.' >&2
+    exit 1
+fi
+
 # check if kof is already installed
 if helm list -n kof | grep -q kof; then
     echo 'Error: kof is already installed.' >&2
