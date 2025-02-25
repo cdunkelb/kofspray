@@ -22,7 +22,7 @@ if [ -z "$ADMIN_EMAIL" ]; then
     exit 1
 fi
 
-echo "$REGIONAL_CLUSTER_NAME, $REGIONAL_DOMAIN, $ADMIN_EMAIL"
+
 
 # check if TEMPLATE is set and if not, set the default
 if [ -z "$TEMPLATE" ]; then
@@ -30,6 +30,8 @@ if [ -z "$TEMPLATE" ]; then
 fi
 
 CHILD_CLUSTER_NAME=$REGIONAL_CLUSTER_NAME-child1
+
+echo "rendering $CHILD_CLUSTER_NAME..."
 
 cat >child-cluster.yaml <<EOF
 apiVersion: k0rdent.mirantis.com/v1alpha1
@@ -98,3 +100,6 @@ spec:
               credentials_secret_name: storage-vmuser-credentials
               endpoint: https://vmauth.$REGIONAL_DOMAIN/vm/insert/0/prometheus/api/v1/write
 EOF
+
+echo "Installing $CHILD_CLUSTER_NAME..."
+kubectl apply -f child-cluster.yaml
