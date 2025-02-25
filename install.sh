@@ -13,7 +13,7 @@ if ! [ -x "$(command -v kubectl)" ]; then
 fi
 
 # check if we are connected to a cluster.
-if ! kubectl version --short &>/dev/null; then
+if ! kubectl version; then
     echo 'Error: Not connected to a cluster.' >&2
     exit 1
 fi
