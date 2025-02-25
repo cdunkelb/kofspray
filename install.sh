@@ -1,7 +1,9 @@
 #!/bin/bash
 set -x
 
-KOF_VERSION=0.1.1
+# check to see if KOF_VERSION is set, if not set it to 0.1.1
+: ${KOF_VERSION:=0.1.1}
+
 #check pre-requisites, need helm, kubectl
 if ! [ -x "$(command -v helm)" ]; then
   echo 'Error: helm is not installed.' >&2
