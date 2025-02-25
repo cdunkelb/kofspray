@@ -40,9 +40,8 @@ if helm list -n kof | grep -q kof; then
 fi
 
 # Check if AWS credentials are available
-set_aws_credentials() {
 if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-    echo 'Error: AWS credentials are not set.' >&2
+    echo 'Error: AWS credentials for external-dns are not set.' >&2
     exit 1
 fi
 
@@ -57,7 +56,11 @@ EOF
 if [$AWS_SESSION_TOKEN] ; then
     echo "aws_session_token = $AWS_SESSION_TOKEN" >> external-dns-aws-credentials
 fi
-}
+
+kubectl create namespace kof
+kubectl create secret generic \
+  -n kof external-dns-aws-credentials \
+  --from-file external-dns-aws-credentials
 
 # install kof via helm
 helm install --wait --create-namespace -n kof kof-operators \
@@ -66,6 +69,13 @@ helm install --wait --create-namespace -n kof kof-operators \
 cat >mothership-values.yaml <<EOF
 kcm:
   installTemplates: true
+  kof:
+    clusterProfiles:
+      kof-aws-dns-secrets:
+        matchLabels:
+          k0rdent.mirantis.com/kof-aws-dns-secrets: "true"
+        secrets:
+          - external-dns-aws-credentials
 EOF
 
 helm install --wait -f mothership-values.yaml -n kof kof-mothership \
