@@ -53,7 +53,7 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 EOF
 
 # if there is a session token add it to the credentials file
-if [$AWS_SESSION_TOKEN] ; then
+if [ -n "$AWS_SESSION_TOKEN" ]; then
     echo "aws_session_token = $AWS_SESSION_TOKEN" >> external-dns-aws-credentials
 fi
 
