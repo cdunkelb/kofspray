@@ -7,3 +7,5 @@ if [ -z "$REGIONAL_CLUSTER_NAME" ]; then
 fi
 
 kubectl get secrets -n kcm-system $REGIONAL_CLUSTER_NAME-kubeconfig -o jsonpath="{.data.value}" | base64 -d > $REGIONAL_CLUSTER_NAME-kubeconfig.yaml
+
+echo "kubeconfig created at $REGIONAL_CLUSTER_NAME-kubeconfig.yaml"
