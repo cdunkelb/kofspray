@@ -48,7 +48,7 @@ aws iam attach-user-policy --user-name "externaldns" --policy-arn $POLICY_ARN
 SECRET_ACCESS_KEY=$(aws iam create-access-key --user-name "externaldns")
 ACCESS_KEY_ID=$(echo $SECRET_ACCESS_KEY | jq -r '.AccessKey.AccessKeyId')
 
-cat <<-EOF > external-dns-aws-credentials.txt
+cat <<-EOF > external-dns-aws-credentials
 
 [default]
 aws_access_key_id = $(echo $ACCESS_KEY_ID)
