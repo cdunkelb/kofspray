@@ -4,12 +4,6 @@ if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
     exit 1
 fi
 
-# Check if the user has IAM permissions
-if ! aws iam get-user > /dev/null 2>&1; then
-    echo 'Error: AWS credentials do not have IAM permissions.' >&2
-    exit 1
-fi
-
 # Create a policy that allows external-dns to update Route53 records
 cat >policy.json <<EOF
 {
