@@ -3,16 +3,20 @@ scripts to assist in deployment of kof
 
 ### How to use
 
-Set the following variables
-
 AWS Secrets with IAM config access
 
 ```
-username=<username>
-export EXTERNAL_DNS_USER=$username-externaldns
-export CAPI_USER=$username-capi
-export KOF_VERSION=0.3.0
-export CLEANUP=false
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_SESSION_TOKEN=
 ```
 
-`./run.sh`
+Set other variables
+
+```
+#Set variables in env.sh
+source env.sh
+./run.sh
+./install-region-cluster.sh
+./install-child-cluster.sh
+```
