@@ -20,3 +20,14 @@ for KEY in $ACCESS_KEYS; do
 done
 
 echo "All access keys for user $IAM_USER have been deleted."
+
+# Detach all policies from the user
+POLICIES=$(aws iam list-attached-user-policies --user-name "$IAM_USER" --query 'AttachedPolicies[*].PolicyArn' --output text)
+for POLICY in $POLICIES; do
+    echo "Detaching policy: $POLICY from user: $IAM_USER"
+    aws iam detach-user-policy --user-name "$IAM_USER" --policy-arn "$POLICY"
+done
+
+# Delete the user
+aws iam delete-user --user-name "$IAM_USER"
+echo "User $IAM_USER has been deleted."

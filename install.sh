@@ -1,8 +1,11 @@
 #!/bin/bash
 set -x
 
-# check to see if KOF_VERSION is set, if not set it to 0.1.1
-: ${KOF_VERSION:=0.1.1}
+# check to see if KOF_VERSION is set, if not exit
+if [ -z "$KOF_VERSION" ]; then
+    echo "Error: KOF_VERSION is not set." >&2
+    exit 1
+fi
 
 #check pre-requisites, need helm, kubectl
 if ! [ -x "$(command -v helm)" ]; then
@@ -39,22 +42,10 @@ if helm list -n kof | grep -q kof; then
     exit 1
 fi
 
-# Check if AWS credentials are available
-if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-    echo 'Error: AWS credentials for external-dns are not set.' >&2
+# Check if external-dns-aws-credentials file exists
+if [ ! -f external-dns-aws-credentials ]; then
+    echo 'Error: external-dns-aws-credentials file does not exist. Try running create-external-dns-user.sh' >&2
     exit 1
-fi
-
-# create credentials for DNS auth
-cat >external-dns-aws-credentials <<EOF
-[default]
-aws_access_key_id = $AWS_ACCESS_KEY_ID
-aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
-EOF
-
-# if there is a session token add it to the credentials file
-if [ -n "$AWS_SESSION_TOKEN" ]; then
-    echo "aws_session_token = $AWS_SESSION_TOKEN" >> external-dns-aws-credentials
 fi
 
 kubectl create namespace kof
@@ -80,3 +71,8 @@ EOF
 
 helm install --wait -f mothership-values.yaml -n kof kof-mothership \
   oci://ghcr.io/k0rdent/kof/charts/kof-mothership --version $KOF_VERSION
+
+helm install --wait -n kof kof-regional \
+  oci://ghcr.io/k0rdent/kof/charts/kof-regional --version $KOF_VERSION
+helm install --wait -n kof kof-child \
+  oci://ghcr.io/k0rdent/kof/charts/kof-child --version $KOF_VERSION
